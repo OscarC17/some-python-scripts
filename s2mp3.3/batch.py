@@ -2,14 +2,13 @@ from urllib import parse, request
 from bs4 import BeautifulSoup
 from youtube_dl import YoutubeDL
 from os import path, mkdir, getcwd, listdir
-from shutil import rmtree
 from pandas import read_csv
 
 input_list = []
 song_vector = []
 artist_vector = []
 answer_check = False
-directory = 'D:/mp3dump'
+outputDirectory = 'output'
 inputDirectory = 'input'
 for file in listdir(inputDirectory):
     if file.endswith(".csv"):
@@ -28,21 +27,19 @@ for x in range(0, len(input_list)):
     column = csv['Track Name']
     for y in range(0, len(column)):
         song_vector.append(column[y])
-        print(column[y])
-    print(column)
+    print(song_vector)
 for x in range(0, len(input_list)):
     csv = read_csv(input_list[x])
     column = csv['Artist Name']
     for y in range(0, len(column)):
         artist_vector.append(column[y])
     print(artist_vector)
-    print(column)
 try:
-    if not path.exists(directory):
-        mkdir(directory)
+    if not path.exists(outputDirectory):
+        mkdir(outputDirectory)
 except PermissionError:
     while not answer_check:
-        except_answer = input("permission error while creating " + directory)
+        except_answer = input("permission error while creating " + outputDirectory)
         quit()
 
 for x in range(0, len(song_vector)):
@@ -77,7 +74,7 @@ for x in range(0, len(song_vector)):
 
             ydl_opts = {'format': 'bestaudio/best',
                         'noplaylist': True,
-                        'outtmpl': path.join(directory, '%(title)s.%(ext)s'),
+                        'outtmpl': path.join(outputDirectory, '%(title)s.%(ext)s'),
                         'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3',
                                             'preferredquality': '128', }], 'logger': MyLogger(),
                         'progress_hooks': [my_hook], }
