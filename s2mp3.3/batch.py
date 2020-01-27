@@ -52,40 +52,40 @@ for x in range(0, len(song_vector)):
     html = response.read()
     soup = BeautifulSoup(html, 'html.parser')
     for vid in soup.findAll(attrs={'class': 'yt-uix-tile-link'}):
-        print('downloading ' + 'https://www.youtube.com' + vid['href'])
-        try:
-            class MyLogger(object):
-                def debug(self, msg):
-                    pass
+        if ("channel" not in vid['href']) & ("user" not in vid['href']):
+            try:
+                class MyLogger(object):
+                    def debug(self, msg):
+                        pass
 
-                def warning(self, msg):
-                    pass
+                    def warning(self, msg):
+                        pass
 
-                def error(self, msg):
-                    print(msg)
+                    def error(self, msg):
+                        print(msg)
 
-            def my_hook(d):
-                if d['status'] == 'finished':
-                    print('Done downloading ' + song_vector[x] + ', now converting ...')
+                def my_hook(d):
+                    if d['status'] == 'finished':
+                        print('Done downloading ' + song_vector[x] + ', now converting ...')
 
 
-            ydl_opts = {'format': 'bestaudio/best',
-                        'noplaylist': True,
-                        'outtmpl': path.join('output', '%(title)s.%(ext)s'),
-                        'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3',
-                                            'preferredquality': '128', }], 'logger': MyLogger(),
-                        'progress_hooks': [my_hook], }
-            with YoutubeDL(ydl_opts) as ydl:
-                result = ydl.extract_info(
-                    'https://www.youtube.com' + vid['href'],
-                    download=False  # We just want to extract the info
-                )
-                print(result['duration'])
-                if ("channel" not in vid['href']) & (result['duration'] <= max_seconds):
-                    ydl.download(['https://www.youtube.com' + vid['href']])
-                else:
-                    print("bro channel why / too long bruh")
-                    break
-        except Exception as e:
-            print("failed to download " + song_vector[x] + str(e))
-        break
+                ydl_opts = {'format': 'bestaudio/best',
+                            'noplaylist': True,
+                            'outtmpl': path.join('output', '%(title)s.%(ext)s'),
+                            'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3',
+                                                'preferredquality': '128', }], 'logger': MyLogger(),
+                            'progress_hooks': [my_hook], }
+                with YoutubeDL(ydl_opts) as ydl:
+                    result = ydl.extract_info(
+                        'https://www.youtube.com' + vid['href'],
+                        download=False  # We just want to extract the info
+                    )
+                    print('downloading ' + 'https://www.youtube.com' + vid['href'])
+                    print(result['duration'])
+                    if result['duration'] <= max_seconds:
+                        ydl.download(['https://www.youtube.com' + vid['href']])
+                    else:
+                        print('video too long, skipping')
+            except Exception as e:
+                print("failed to download " + song_vector[x] + str(e))
+            break
