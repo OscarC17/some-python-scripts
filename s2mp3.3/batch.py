@@ -4,24 +4,28 @@ from youtube_dl import YoutubeDL
 from os import path, mkdir, getcwd, listdir
 from pandas import read_csv
 
+# initialise variables
 input_list = []
 song_vector = []
 artist_vector = []
 answer_check = False
-outputDirectory = 'output'
-inputDirectory = 'input'
-for file in listdir(inputDirectory):
+
+# scan for csv files in input directory
+for file in listdir('input'):
     if file.endswith(".csv"):
-        input_list.append(path.join(inputDirectory, file))
+        input_list.append(path.join('input', file))
+
+# if none are found use song_list and artist_list instead
 if not input_list:
     setting_artist = input("use artist mode? (y/n): ")
-    artist_input = open(getcwd() + "input/artist_list.txt", "r", encoding="utf8")
+    artist_input = open("input/artist_list.txt", "r", encoding="utf8")
     artist_vector = artist_input.read().split('\n')
-    song_input = open(getcwd() + "input/song_list.txt", "r", encoding="utf8")
+    song_input = open("input/song_list.txt", "r", encoding="utf8")
     song_vector = song_input.read().split('\n')
 setting_lyric = input("append lyric to search term? (y/n): ")
 max_seconds = int(input("max seconds for song, default 600: ") or "600")
 
+# read Track Name and Artist Name columns from csv and put them in a list
 for x in range(0, len(input_list)):
     csv = read_csv(input_list[x])
     column = csv['Track Name']
@@ -34,22 +38,15 @@ for x in range(0, len(input_list)):
     for y in range(0, len(column)):
         artist_vector.append(column[y])
     print(artist_vector)
-try:
-    if not path.exists(outputDirectory):
-        mkdir(outputDirectory)
-except PermissionError:
-    while not answer_check:
-        except_answer = input("permission error while creating " + outputDirectory)
-        quit()
 
+# combine song and lyric lists
 for x in range(0, len(song_vector)):
     if not song_vector[x].startswith('#'):
         if (setting_lyric == "y") | (setting_lyric == "Y"):
             song_vector[x] = song_vector[x] + " lyrics"
         song_vector[x] = artist_vector[x].split(',')[0] + " " + song_vector[x]
 
-    textToSearch = song_vector[x]
-    query = parse.quote(textToSearch)
+    query = parse.quote(song_vector[x])
     url = "https://www.youtube.com/results?search_query=" + query
     response = request.urlopen(url)
     html = response.read()
@@ -74,7 +71,7 @@ for x in range(0, len(song_vector)):
 
             ydl_opts = {'format': 'bestaudio/best',
                         'noplaylist': True,
-                        'outtmpl': path.join(outputDirectory, '%(title)s.%(ext)s'),
+                        'outtmpl': path.join('output', '%(title)s.%(ext)s'),
                         'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3',
                                             'preferredquality': '128', }], 'logger': MyLogger(),
                         'progress_hooks': [my_hook], }
