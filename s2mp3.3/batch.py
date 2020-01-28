@@ -14,11 +14,11 @@ answer_check = False
 for file in listdir('input'):
     if file.endswith(".csv"):
         input_list.append(path.join('input', file))
-
-# if none are found use song_list and artist_list instead
 if not input_list:
     print("no .csv files were found in the input folder, closing")
     exit()
+
+# let user set preferences for download
 setting_lyric = input("append lyric to search term? (y/n): ")
 max_seconds = int(input("max seconds for song, default 600: ") or "600")
 
@@ -43,6 +43,7 @@ for x in range(0, len(song_vector)):
             song_vector[x] = song_vector[x] + " lyrics"
         song_vector[x] = artist_vector[x].split(',')[0] + " " + song_vector[x]
 
+# search for the video on youtube
     query = parse.quote(song_vector[x])
     url = "https://www.youtube.com/results?search_query=" + query
     response = request.urlopen(url)
