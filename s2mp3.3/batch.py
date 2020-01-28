@@ -17,11 +17,8 @@ for file in listdir('input'):
 
 # if none are found use song_list and artist_list instead
 if not input_list:
-    setting_artist = input("use artist mode? (y/n): ")
-    artist_input = open("input/artist_list.txt", "r", encoding="utf8")
-    artist_vector = artist_input.read().split('\n')
-    song_input = open("input/song_list.txt", "r", encoding="utf8")
-    song_vector = song_input.read().split('\n')
+    print("no .csv files were found in the input folder, closing")
+    exit()
 setting_lyric = input("append lyric to search term? (y/n): ")
 max_seconds = int(input("max seconds for song, default 600: ") or "600")
 

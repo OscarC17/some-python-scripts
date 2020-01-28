@@ -1,1 +1,0 @@
-#Ignore this file if you intend to download directly from csv
