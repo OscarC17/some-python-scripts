@@ -28,16 +28,17 @@ for x in range(0, len(input_list)):
     column = csv['Track Name']
     for y in range(0, len(column)):
         song_vector.append(column[y])
-    print(song_vector)
+print(song_vector)
 for x in range(0, len(input_list)):
     csv = read_csv(input_list[x])
     column = csv['Artist Name']
     for y in range(0, len(column)):
         artist_vector.append(column[y])
-    print(artist_vector)
+print(artist_vector)
 
 # combine song and lyric lists
 for x in range(0, len(song_vector)):
+    print("downloading song " + x + " of " + len(song_vector))
     if not song_vector[x].startswith('#'):
         if (setting_lyric == "y") | (setting_lyric == "Y"):
             song_vector[x] = song_vector[x] + " lyrics"
