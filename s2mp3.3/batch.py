@@ -3,12 +3,19 @@ from bs4 import BeautifulSoup
 from youtube_dl import YoutubeDL
 from os import path, mkdir, getcwd, listdir
 from pandas import read_csv
+from mp3_tagger import MP3File, VERSION_1, VERSION_2, VERSION_BOTH
 
 # initialise variables
 input_list = []
 song_vector = []
 artist_vector = []
+album_vector = []
 answer_check = False
+name = ''
+
+# create output folder
+if not path.exists('output'):
+    mkdir('output')
 
 # scan for csv files in input directory
 for file in listdir('input'):
@@ -35,8 +42,14 @@ for x in range(0, len(input_list)):
     for y in range(0, len(column)):
         artist_vector.append(column[y])
 print(artist_vector)
+for x in range(0, len(input_list)):
+    csv = read_csv(input_list[x])
+    column = csv['Album Name']
+    for y in range(0, len(column)):
+        album_vector.append(column[y])
+print(album_vector)
 
-# combine song and lyric lists
+# combine song and lyric lists / main program loop
 for x in range(0, len(song_vector)):
     print("downloading song " + str(x) + " of " + str(len(song_vector)))
     if not song_vector[x].startswith('#'):
@@ -81,6 +94,7 @@ for x in range(0, len(song_vector)):
                     )
                     print('downloading ' + 'https://www.youtube.com' + vid['href'])
                     print(result['duration'])
+                    name = result['title']
                     if result['duration'] <= max_seconds:
                         ydl.download(['https://www.youtube.com' + vid['href']])
                     else:
@@ -88,3 +102,7 @@ for x in range(0, len(song_vector)):
             except Exception as e:
                 print("failed to download " + song_vector[x] + str(e))
             break
+    mp3 = MP3File('output/' + name + '.mp3')
+    mp3.album = album_vector[x]
+    mp3.save()
+
