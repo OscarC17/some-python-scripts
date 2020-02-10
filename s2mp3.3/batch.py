@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from youtube_dl import YoutubeDL
 from os import path, mkdir, getcwd, listdir
 from pandas import read_csv
-from mp3_tagger import MP3File, VERSION_1, VERSION_2, VERSION_BOTH
+from mp3_tagger import MP3File
 
 # initialise variables
 input_list = []
@@ -92,7 +92,7 @@ for x in range(0, len(song_vector)):
                         'https://www.youtube.com' + vid['href'],
                         download=False  # We just want to extract the info
                     )
-                    print('downloading ' + 'https://www.youtube.com' + vid['href'])
+                    print('downloading ' + result['title'])
                     print(result['duration'])
                     name = result['title']
                     if result['duration'] <= max_seconds:
@@ -102,7 +102,10 @@ for x in range(0, len(song_vector)):
             except Exception as e:
                 print("failed to download " + song_vector[x] + str(e))
             break
-    mp3 = MP3File('output/' + name + '.mp3')
-    mp3.album = album_vector[x]
-    mp3.save()
+    try:
+        mp3 = MP3File('output/' + name + '.mp3')
+        mp3.album = album_vector[x]
+        mp3.save()
+    except (FileNotFoundError, OSError):
+        print("we could not add album metadata to " + name)
 
