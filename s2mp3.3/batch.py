@@ -55,8 +55,7 @@ print(album_vector)
 
 # main program loop
 # combine song and lyric lists
-list_length = len(song_vector)
-for x in range(0, list_length):
+for x in range(0, len(song_vector)):
     print("downloading song " + str(x+1) + " of " + str(len(song_vector))+ ', '+ song_vector[virtual_x])
     if not song_vector[virtual_x].startswith('#'):
         if (setting_lyric == "y") | (setting_lyric == "Y"):
@@ -122,7 +121,6 @@ for x in range(0, list_length):
                 mp3file.save()  
             except (FileNotFoundError, mutagen.MutagenError):
                 print("we could not add album metadata to " + name)
-            list_length += 1
             virtual_x += 1
     except OSError:
         virtual_x -= 1
