@@ -3,7 +3,10 @@ from bs4 import BeautifulSoup
 from youtube_dl import YoutubeDL
 from os import path, mkdir, getcwd, listdir
 from pandas import read_csv
-from mp3_tagger import MP3File
+from mutagen.mp3 import MP3  
+from mutagen.easyid3 import EasyID3  
+import mutagen.id3  
+from mutagen.id3 import ID3, TIT2, TIT3, TALB, TPE1, TRCK, TYER  
 
 # initialise variables
 input_list = []
@@ -51,11 +54,10 @@ print(album_vector)
 
 # combine song and lyric lists / main program loop
 for x in range(0, len(song_vector)):
-    print("downloading song " + str(x) + " of " + str(len(song_vector)))
+    print("downloading song " + str(x+1) + " of " + str(len(song_vector)))
     if not song_vector[x].startswith('#'):
         if (setting_lyric == "y") | (setting_lyric == "Y"):
-            song_vector[x] = song_vector[x] + " lyrics"
-        song_vector[x] = artist_vector[x].split(',')[0] + " " + song_vector[x]
+            song_vector[x] = song_vector[x] + " lyric video"
 
 # search for the video on youtube
     query = parse.quote(song_vector[x])
@@ -78,7 +80,7 @@ for x in range(0, len(song_vector)):
 
                 def my_hook(d):
                     if d['status'] == 'finished':
-                        print('Done downloading ' + song_vector[x] + ', now converting ...')
+                        print('Done downloading ' + artist_vector[x].split(',')[0] + " " + song_vector[x] + ', now converting ...')
 
 
                 ydl_opts = {'format': 'bestaudio/best',
@@ -100,12 +102,19 @@ for x in range(0, len(song_vector)):
                     else:
                         print('video too long, skipping')
             except Exception as e:
-                print("failed to download " + song_vector[x] + str(e))
+                print("failed to download " + artist_vector[x].split(',')[0] + " " + song_vector[x] + str(e))
             break
     try:
-        mp3 = MP3File('output/' + name + '.mp3')
-        mp3.album = album_vector[x]
-        mp3.save()
-    except (FileNotFoundError, OSError):
+        mp3file = MP3('output/' + name + '.mp3', ID3=EasyID3)
+        try:
+            mp3file.add_tags(ID3=EasyID3)
+        except mutagen.id3.error:
+            print("has tags")
+        mp3file['album'] = album_vector[x]
+        mp3file['albumartist'] = album_vector[x]
+        mp3file['artist'] = artist_vector[x]
+        mp3file['title'] = song_vector[x]
+        mp3file.save()  
+    except (FileNotFoundError, mutagen.MutagenError):
         print("we could not add album metadata to " + name)
 
