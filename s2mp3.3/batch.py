@@ -66,7 +66,7 @@ for x in range(0, len(song_vector)):
     html = response.read()
     soup = BeautifulSoup(html, 'html.parser')
     for vid in soup.findAll(attrs={'class': 'yt-uix-tile-link'}):
-        if ("channel" not in vid['href']) & ("user" not in vid['href']):
+        if ("channel" not in vid['href']) & ("user" not in vid['href']) & ("google" not in vid['href']) :
             try:
                 class MyLogger(object):
                     def debug(self, msg):
