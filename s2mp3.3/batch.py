@@ -15,7 +15,6 @@ artist_vector = []
 album_vector = []
 answer_check = False
 name = ''
-virtual_x = 0
 
 # create output folder
 if not path.exists('output'):
@@ -56,14 +55,14 @@ print(album_vector)
 # main program loop
 # combine song and lyric lists
 for x in range(0, len(song_vector)):
-    print("downloading song " + str(x+1) + " of " + str(len(song_vector))+ ', '+ song_vector[virtual_x])
-    if not song_vector[virtual_x].startswith('#'):
+    print("downloading song " + str(x+1) + " of " + str(len(song_vector))+ ', '+ song_vector[x])
+    if not song_vector[x].startswith('#'):
         if (setting_lyric == "y") | (setting_lyric == "Y"):
-            song_vector[virtual_x] = song_vector[virtual_x] + " lyric video"
+            song_vector[x] = song_vector[x] + " lyric video"
 
 # search for the video on youtube
     try:
-        query = parse.quote(song_vector[virtual_x])
+        query = parse.quote(song_vector[x])
         url = "https://www.youtube.com/results?search_query=" + query
         response = request.urlopen(url)
         html = response.read()
@@ -84,7 +83,7 @@ for x in range(0, len(song_vector)):
 
                         def my_hook(d):
                             if d['status'] == 'finished':
-                                print('Done downloading ' + artist_vector[virtual_x].split(',')[0] + " " + song_vector[virtual_x] + ', now converting ...')
+                                print('Done downloading ' + artist_vector[x].split(',')[0] + " " + song_vector[x] + ', now converting ...')
 
 
                         ydl_opts = {'format': 'bestaudio/best',
@@ -106,23 +105,21 @@ for x in range(0, len(song_vector)):
                             else:
                                 print('video too long, skipping')
                     except Exception as e:
-                        print("failed to download " + artist_vector[virtual_x].split(',')[0] + " " + song_vector[virtual_x] + str(e))
+                        print("failed to download " + artist_vector[x].split(',')[0] + " " + song_vector[x] + str(e))
                     break
+        try:
+            mp3file = MP3('output/' + name + '.mp3', ID3=EasyID3)
             try:
-                mp3file = MP3('output/' + name + '.mp3', ID3=EasyID3)
-                try:
-                    mp3file.add_tags(ID3=EasyID3)
-                except mutagen.id3.error:
-                    print("has tags")
-                mp3file['album'] = album_vector[virtual_x]
-                mp3file['albumartist'] = album_vector[virtual_x]
-                mp3file['artist'] = artist_vector[virtual_x]
-                mp3file['title'] = song_vector[virtual_x]
-                mp3file.save()  
-            except (FileNotFoundError, mutagen.MutagenError):
-                print("we could not add album metadata to " + name)
-            virtual_x += 1
+                mp3file.add_tags(ID3=EasyID3)
+            except mutagen.id3.error:
+                print("has tags")
+            mp3file['album'] = album_vector[x]
+            mp3file['albumartist'] = album_vector[x]
+            mp3file['artist'] = artist_vector[x]
+            mp3file['title'] = song_vector[x]
+            mp3file.save()  
+        except (FileNotFoundError, mutagen.MutagenError):
+            print("we could not add album metadata to " + name)
     except OSError:
-        virtual_x -= 1
         input("There has been an error with the network, press enter to resume")
 
