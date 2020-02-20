@@ -108,6 +108,7 @@ for x in range(0, len(song_vector)):
                         print("failed to download " + artist_vector[x].split(',')[0] + " " + song_vector[x] + str(e))
                     break
         try:
+            name = name.replace('|', '_')
             mp3file = MP3('output/' + name + '.mp3', ID3=EasyID3)
             try:
                 mp3file.add_tags(ID3=EasyID3)
