@@ -110,7 +110,8 @@ for x in range(0, len(song_vector)):
         try:
             for i in ['/','\\','|','*','<','>','"']:
                 name = name.replace(i, '_')
-            name = name.replace(':', ' -')
+            name = name.replace(': ', ' - ')
+            name = name.replace('?', '')
             mp3file = MP3('output/' + name + '.mp3', ID3=EasyID3)
             try:
                 mp3file.add_tags(ID3=EasyID3)
