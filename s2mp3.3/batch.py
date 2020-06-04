@@ -13,6 +13,7 @@ input_list = []
 song_vector = []
 artist_vector = []
 album_vector = []
+song_vector2 = []
 answer_check = False
 name = ''
 
@@ -38,6 +39,7 @@ for x in range(0, len(input_list)):
     column = csv['Track Name']
     for y in range(0, len(column)):
         song_vector.append(column[y])
+        song_vector2.append(column[y])
 print(song_vector)
 for x in range(0, len(input_list)):
     csv = read_csv(input_list[x])
@@ -122,7 +124,7 @@ for x in range(0, len(song_vector)):
             mp3file['album'] = album_vector[x]
             mp3file['albumartist'] = album_vector[x]
             mp3file['artist'] = artist_vector[x]
-            mp3file['title'] = song_vector[x]
+            mp3file['title'] = song_vector2[x]
             mp3file.save()  
         except (FileNotFoundError, mutagen.MutagenError):
             print("we could not add album metadata to " + name)
