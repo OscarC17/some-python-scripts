@@ -55,6 +55,8 @@ print(album_vector)
 # main program loop
 # combine song and lyric lists
 for x in range(0, len(song_vector)):
+    rest = artist_vector[x].split(",", 1)[0]
+    song_vector[x] = song_vector[x] + " " + rest
     print("downloading song " + str(x+1) + " of " + str(len(song_vector))+ ', '+ song_vector[x])
     if not song_vector[x].startswith('#'):
         if (setting_lyric == "y") | (setting_lyric == "Y"):
